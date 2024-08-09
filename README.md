@@ -11,4 +11,4 @@ Health Care App for Hospital Facilities
 - Appwrite
 - Sentry
 
-![Github cover](/assets/images/github-cover.png)
+![Github cover](public/assets/images/github-cover.png)
