@@ -10,3 +10,5 @@ Health Care App for Hospital Facilities
 - Twilio
 - Appwrite
 - Sentry
+
+![Github cover](/assets/images/github-cover.png)
