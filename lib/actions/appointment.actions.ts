@@ -5,8 +5,9 @@ import {
   DATABASE_ID,
   databases,
   APPOINTMENT_COLLECTION_ID,
+  messaging,
 } from '../appwrite.config'
-import { parseStringify } from '../utils'
+import { formatDateTime, parseStringify } from '../utils'
 import { Appointment } from '@/types/appwrite.types'
 import { revalidatePath } from 'next/cache'
 
@@ -99,11 +100,36 @@ export const updateAppointment = async ({
 
     if (!updatedAppointment) throw Error
 
-    // TODO: SMS notification
+    const smsMessage = `Hi, it's Carepulse. 
+      ${
+        type === 'schedule'
+          ? `Your appointment has been scheduled for ${
+              formatDateTime(appointment.schedule!).dateTime
+            } with Dr. ${appointment.primaryPhysician}`
+          : `Your appointment has been cancelled. Reason: ${appointment.cancellationReason}`
+      }
+    `
+
+    await sendSMSNotification(userId, smsMessage)
 
     revalidatePath('/admin')
     return parseStringify(updatedAppointment)
   } catch (error) {
     console.error('An error occurred while scheduling an appointment:', error)
+  }
+}
+
+export const sendSMSNotification = async (userId: string, content: string) => {
+  try {
+    const message = await messaging.createSms(
+      ID.unique(),
+      content,
+      [],
+      [userId]
+    )
+
+    return parseStringify(message)
+  } catch (error) {
+    console.log(error)
   }
 }
